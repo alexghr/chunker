@@ -2,11 +2,21 @@
   "name": "chunker",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/bin/add.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -b src/bin",
+    "pretest": "$npm_execpath run build",
+    "test": "node dist/bin/add.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "MIT"
+  "author": "Alex Gherghisan <alexghr@users.noreply.github.com> (https://alexghr.me)",
+  "license": "MIT",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@alexghr/ts": "^0.1.0",
+    "@types/node": "^16.0.0",
+    "typescript": "^4.3.5"
+  }
 }
