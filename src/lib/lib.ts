@@ -83,7 +83,7 @@ function dagReadStream(root: Node | null | undefined): Readable {
     return Readable.from([]);
   }
 
-  // iterative, in-order traversal
+  // iterative, post-order traversal
   // stack acts like stack in the recursive version
   const stack = [root];
   // seen keeps track of which nodes we've pushed
@@ -98,27 +98,30 @@ function dagReadStream(root: Node | null | undefined): Readable {
         const last = stack[stack.length - 1];
         // stop if stack is empty
         if (!last) {
+          // close the stream
           this.push(null);
           break;
         }
 
-        // if data available on this node, push it
-        // and end this read() call
-        if (last.data) {
-          this.push(last.data);
-          stack.pop();
-          break;
-        }
-
-        // otherwise, look for the first unvisited leaf
-        // always goes down the left-most ref that hasn't been explored
+        // visit linked nodes, look for the first unvisited child
+        // go down the left-most ref that hasn't yet been explored
         const nextId = last.refs?.find(isNotSeen);
         if (nextId) {
           seen.add(nextId);
           stack.push(nodeCache.get(nextId)!);
+        } else if (last.data) {
+          // if data available on this node, push it
+          // and end this read() call
+          this.push(last.data);
+          stack.pop();
+          break;
         } else {
+          // at this point we have no children to visit and no data
+          // go to parent and try again
           stack.pop();
         }
+        // this loop ends when either we've pushed one chunk of data
+        // or we've visited all nodes
       } while (true);
     }
   });
