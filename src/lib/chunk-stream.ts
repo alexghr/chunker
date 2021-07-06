@@ -9,7 +9,7 @@ const DEFAULT_CHUNK_SIZE_BYTES = 64;
 /**
  * takes a stream of bytes and splits it into chunks of a defined size
  */
-export function chunkStream(opts: ChunkStreamOptions = {}): Transform {
+export function createChunkingStream(opts: ChunkStreamOptions = {}): Transform {
   const { chunkSize = DEFAULT_CHUNK_SIZE_BYTES } = opts;
   let buffer = Buffer.alloc(0);
 
