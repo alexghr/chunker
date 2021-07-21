@@ -15,27 +15,24 @@ export async function createLeftHeavyDag(stream: Readable, opts: Options = {}): 
   let last: DagNode | null = null;
   const { maxRefs = DEFAULT_MAX_REFS } = opts;
 
-  return new Promise((res, rej) => {
-    stream
-      .on("data", (chunk) => {
-        if (!last) {
-          last = makeDagNode(chunk);
-        } else if (last.data) {
-          // only keep data in leaf nodes
-          const kid = makeDagNode(chunk);
-          const parent = makeDagNode(null, [last.id, kid.id]);
-          last = parent;
-        } else if ((last.refs?.length ?? 0) >= maxRefs) {
-          const kid = makeDagNode(chunk);
-          const parent = makeDagNode(null, [last.id, kid.id]);
-          last = parent;
-        } else {
-          const kid = makeDagNode(chunk);
-          const parent = makeDagNode(null, [...(last.refs ?? []), kid.id]);
-          last = parent;
-        }
-      })
-      .on("error", (err) => rej(err))
-      .on("end", () => res(last));
-  });
+  for await (const chunk of stream) {
+    if (!last) {
+      last = await makeDagNode(chunk);
+    } else if (last.data) {
+      // only keep data in leaf nodes
+      const kid = await makeDagNode(chunk);
+      const parent: DagNode = await makeDagNode(null, [last.id, kid.id]);
+      last = parent;
+    } else if ((last.refs?.length ?? 0) >= maxRefs) {
+      const kid = await makeDagNode(chunk);
+      const parent: DagNode = await makeDagNode(null, [last.id, kid.id]);
+      last = parent;
+    } else {
+      const kid = await makeDagNode(chunk);
+      const parent: DagNode = await makeDagNode(null, [...(last.refs ?? []), kid.id]);
+      last = parent;
+    }
+  }
+
+  return last;
 }

@@ -19,7 +19,7 @@ export function createDagReadStream(root: DagNode | null | undefined): Readable 
   const isNotSeen = (nodeId: string) => !seen.has(nodeId);
 
   return new Readable({
-    read() {
+    async read() {
       do {
         const last = stack[stack.length - 1];
         // stop if stack is empty
@@ -34,7 +34,7 @@ export function createDagReadStream(root: DagNode | null | undefined): Readable 
         const nextId = last.refs?.find(isNotSeen);
         if (nextId) {
           seen.add(nextId);
-          stack.push(getDagNode(nextId)!);
+          stack.push((await getDagNode(nextId))!);
         } else if (last.data) {
           // if data available on this node, push it
           // and end this read() call

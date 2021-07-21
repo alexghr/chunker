@@ -12,6 +12,9 @@
   "author": "Alex Gherghisan <alexghr@users.noreply.github.com> (https://alexghr.me)",
   "license": "MIT",
   "dependencies": {
+    "sqlite": "^4.0.23",
+    "sqlite3": "^5.0.2",
+    "sql-template-strings": "^2.2.2",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

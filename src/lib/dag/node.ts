@@ -1,4 +1,6 @@
 import { createHash } from "crypto";
+import SQL from "sql-template-strings";
+import { openDb } from "./db";
 
 export type DagNode = {
   id: string;
@@ -6,25 +8,14 @@ export type DagNode = {
   refs: null | readonly string[];
 };
 
-// keep nodes in this map so that they don't get GC-ed
-// nodes themselves only hold references to other node IDs
-const nodeCache = new Map<string, DagNode>();
-
-/**
- * creates a node, dumps it into `nodeCache`
- */
-export function makeDagNode(
+export async function makeDagNode(
   data: Buffer | null,
-  refs: null | readonly string[] = null
-): DagNode {
+  refs: readonly string[] = []
+): Promise<DagNode> {
   const id = createHash("sha256")
     .update(data ?? "null")
     .update(String(refs?.join(",")))
     .digest("base64");
-
-  if (nodeCache.has(id)) {
-    return nodeCache.get(id)!;
-  }
 
   const node: DagNode = {
     id,
@@ -32,11 +23,27 @@ export function makeDagNode(
     refs,
   };
 
-  nodeCache.set(id, node);
+  const db = await openDb();
+  await db.run(SQL`
+    INSERT OR IGNORE INTO
+      chunks (id, data, refs)
+      VALUES (${id}, ${data}, ${refs.join(',')})
+  `);
 
   return node;
 }
 
-export function getDagNode(id: DagNode['id']): DagNode | undefined {
-  return nodeCache.get(id);
+export async function getDagNode(id: DagNode['id']): Promise<DagNode | undefined> {
+  const db = await openDb();
+  const row = await db.get(SQL`SELECT * from chunks where id=${id}`);
+
+  if (row) {
+    return {
+      data: row.data,
+      id: row.id,
+      refs: row.refs.split(',')
+    };
+  } else {
+    return undefined;
+  }
 }
