@@ -1,7 +1,7 @@
 {
   "extends": "@alexghr/ts",
   "compilerOptions": {
-    "outDir": "../../out/bin",
+    "outDir": "../../out/test",
     "rootDir": "./"
   },
   "references": [

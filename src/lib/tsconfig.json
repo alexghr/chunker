@@ -1,7 +1,7 @@
 {
   "extends": "@alexghr/ts",
   "compilerOptions": {
-    "outDir": "../../dist/lib",
+    "outDir": "../../out/lib",
     "rootDir": "./"
   }
 }
