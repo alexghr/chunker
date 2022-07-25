@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@alexghr/ts': ^0.1.0
   '@types/node': ^16.0.0
-  ava: ^4.0.0-alpha.2
+  ava: ^4.3.1
   sql-template-strings: ^2.2.2
   sqlite: ^4.0.23
   sqlite3: ^5.0.2
