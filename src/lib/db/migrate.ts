@@ -5,14 +5,12 @@ import {
   OPEN_CREATE,
 } from "sqlite3";
 
-import { mkdir as mkdirCb } from "fs";
-import { promisify } from "util";
-import { dirname } from "path";
+import { mkdir } from "node:fs/promises";
+import { dirname } from "node:path";
 
 import { DB_PATH } from "../config";
 
 export async function migrate() {
-  const mkdir = promisify(mkdirCb);
   await mkdir(dirname(DB_PATH), {
     recursive: true,
   });

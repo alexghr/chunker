@@ -1,4 +1,4 @@
-import { join } from "path";
+import { join } from "node:path";
 
 const DATA_HOME = process.env.XDG_DATA_HOME ?? join(process.env.HOME ?? process.cwd(), '.local', 'share');
 

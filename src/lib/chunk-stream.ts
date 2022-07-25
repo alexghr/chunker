@@ -1,4 +1,4 @@
-import { Readable, Transform } from "stream";
+import { Transform } from "node:stream";
 
 export type ChunkStreamOptions = {
   chunkSize?: number

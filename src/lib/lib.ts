@@ -1,4 +1,4 @@
-import { createReadStream } from "fs";
+import { createReadStream } from "node:fs";
 import { createChunkingStream } from "./chunk-stream";
 import { createLeftHeavyDag } from "./dag/naive";
 import { createDagReadStream } from "./dag/read-stream";
